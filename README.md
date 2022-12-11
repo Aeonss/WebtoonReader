@@ -79,6 +79,6 @@ WebtoonReader will bookmark where you left off on each Manga after each session.
 * Squash all the bugs!
 
 ## 📘 &nbsp; License
-WebtoonReader is released under the [MIT license](https://github.com/Aeonss/WebtoonReader/blob/master/LICENSE).
+WebtoonReader is released under the [MIT license](https://github.com/Aeonss/WebtoonReader/blob/master/LICENSE.md).
 
 </font>
