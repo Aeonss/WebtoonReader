@@ -69,7 +69,7 @@ class WebtoonReader:
         menubar.add_cascade(label="Load Chapter", command=lambda: self.create_chapter(None))
         menubar.add_cascade(label="Previous Chapter", command=self.prev_chapter)
         menubar.add_cascade(label="Next Chapter", command=self.next_chapter)
-        
+                
         # Keybind shortcuts for changing chapters
         self.window.bind("<Left>", self.key_prev_chapter)
         self.window.bind("<a>", self.key_prev_chapter)
@@ -80,7 +80,6 @@ class WebtoonReader:
         self.window.config(menu=menubar)
         self.window.mainloop()
             
-    
 
     # Loads a chapter to read
     def create_chapter(self, path):
@@ -242,7 +241,7 @@ class WebtoonReader:
         self.checkbutton.bind("<ButtonRelease-1>", self.update_invert)
         
         load_label = tk.Label(settings, text="Number of Images to Load").pack(pady=10)
-        self.load_slider = tk.Scale(settings, from_=1, to=10, orient=tk.HORIZONTAL)
+        self.load_slider = tk.Scale(settings, from_=1, to=20, orient=tk.HORIZONTAL)
         self.load_slider.set(self.load)
         self.load_slider.pack(pady=10)
         self.load_slider.bind("<ButtonRelease-1>", self.update_load)
@@ -270,6 +269,7 @@ class WebtoonReader:
         update_json('scroll_speed', self.scroll_speed)
         self.restart_canvas()
 
+
     # Update invert mouse drag in settings json
     def update_invert(self, e):
         if self.invert_checkbox.get() == 0:
@@ -280,7 +280,7 @@ class WebtoonReader:
             self.invert_drag = False
         self.restart_canvas()
     
-    
+    # Update number of images to be loaded
     def update_load(self, e):
         self.load = self.load_slider.get()
         update_json('load', self.load)
