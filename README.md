@@ -32,14 +32,15 @@ https://www.python.org/downloads/
 
 Download the [latest](https://github.com/Aeonss/WebtoonReader/releases/latest/) release.
 
-Run the exe from the release (WINDOWS ONLY), or run the program with:
-``` bash
-python WebtoonReader.py
-```
 
 Download the requirements:
 ``` bash
 pip install -r requirements.txt
+```
+
+Run the exe from the release (WINDOWS ONLY), or run the program with:
+``` bash
+python WebtoonReader.py
 ```
 
 <h2>Library Setup</h2>
