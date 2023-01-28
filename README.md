@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.imgur.com/H3g88fd.png" width="230" height="160"/></p>
+<p align="center"><img src="https://i.imgur.com/LTBllUG.png" width="230" height="160"/></p>
 
 <h1 align="center">WebtoonReader</h1>
 
@@ -12,7 +12,7 @@
 </p>
 
 <br>
-<p align="center"><img src="https://i.imgur.com/h5Mh2mz.png" width="735" height="850"/></p>
+<p align="center"><img src="https://i.imgur.com/H3g88fd.png" width="735" height="850"/></p>
 
 
 <font size="3">
