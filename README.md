@@ -31,7 +31,9 @@ https://www.python.org/downloads/
 ```
 
 Download the [latest](https://github.com/Aeonss/WebtoonReader/releases/latest/) release.
-
+``` bash
+https://github.com/Aeonss/WebtoonReader/releases/latest/
+```
 
 Download the requirements:
 ``` bash
