@@ -24,6 +24,12 @@ class WebtoonReader:
             with open(SETTINGS_FILE, "a") as f:
                 json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_scroll" : False}, f)
                 f.close()
+        else:
+            if not os.path.exists(get_json("recent_chapter")):
+                update_json("recent_chapter", "")
+                update_json("recent_chapter_index", "")
+            elif not os.path.exists(get_json("library")):
+                update_json("library", "")
         
 
         # Window
