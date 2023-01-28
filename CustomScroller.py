@@ -1,7 +1,7 @@
 # Referenced from: https://stackoverflow.com/a/56046307
 
 import tkinter as tk
-import os
+import os, re
 from PIL import ImageTk, Image
 
 # Custom infinite seamless vertical image scroller using Tkinter Canvas and Scrollbar
@@ -12,18 +12,24 @@ class ImageScroller(tk.Frame):
         self.path = kw.pop('path', None)
         self.width = kw.pop('width', None)
         self.height = kw.pop('height', None)
+        self.bg = kw.pop('bg', None)
         self.scroll_speed = kw.pop('speed', None)
+        self.image_load = kw.pop('load', None)
+        self.invert = kw.pop('invert', None)
         sw = kw.pop('scrollbarwidth', 10)
         super(ImageScroller, self).__init__(master=master, **kw)
-        self.canvas = tk.Canvas(self, width=self.width, height=self.height, highlightthickness=0, **kw)
+        self.canvas = tk.Canvas(self, width=self.width, height=self.height, bg=self.bg, highlightthickness=0, **kw)
         
-        
-        # List of chapter images
+        # List of images
         self.images = []
+        
+        self.scroll_flag = True
+        self.image_index = 0
+
         
         # Fill the frame with images
         if self.path != "":
-            self.fill()
+            self.fill(self.image_index)
         
         # Create vertical scrollbar
         self.v_scroll = tk.Scrollbar(self, orient='vertical', width=sw)
@@ -61,7 +67,16 @@ class ImageScroller(tk.Frame):
         elif event.num == 5 or event.delta < 0:
             self.canvas.yview_scroll(self.scroll_speed, "units" )
             
-            #if self.v_scroll.get()[1] == 1.0
+        if self.v_scroll.get()[1] == 1:
+            if self.scroll_flag and self.image_index + self.image_load < len(os.listdir(self.path)):
+                self.image_index += self.image_load
+                self.fill(self.image_index)
+                self.scroll_flag = False
+        
+        if self.v_scroll.get()[1] != 0 and self.v_scroll.get()[1] != 1:
+            self.scroll_flag = True
+                
+            
             
             
     # Mouse drag handling
@@ -73,41 +88,62 @@ class ImageScroller(tk.Frame):
         
         # https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/cursors.html
         self.canvas.config(cursor="hand2")
-    
+        
         
     def update_scroll(self, event):  
         deltaX = event.x - self._starting_drag_position[0]
         deltaY = event.y - self._starting_drag_position[1]
         self.canvas.xview('scroll', deltaX, 'units')
-        self.canvas.yview('scroll', deltaY, 'units')
+
+        if self.invert:
+            self.canvas.yview('scroll', -deltaY, 'units')
+        else:
+            self.canvas.yview('scroll', deltaY, 'units')
         self._starting_drag_position =  (event.x, event.y)
-           
         
+        if self.v_scroll.get()[1] == 1:
+            if self.scroll_flag and self.image_index + self.image_load < len(os.listdir(self.path)):
+                self.image_index += self.image_load
+                self.fill(self.image_index)
+                self.scroll_flag = False
+    
+    
     def stop_scroll(self, event):
         self.canvas.config(xscrollincrement=0) 
         self.canvas.config(yscrollincrement=0)
         self.canvas.config(cursor="")
         
-        
-        
     # Fills the frame with images from the folder path
-    def fill(self):
-        if os.path.exists(self.path):
-            # Gets all images from directory and adds to list
-            for name in os.listdir(self.path):
-                img = Image.open(os.path.join(self.path, name))
-                
-                # Rescales all images
-                if img.width != self.width:
-                    scale = img.height / img.width
-                    img = img.resize((self.width, int(self.width * scale)), Image.Resampling.LANCZOS)
-
-                # Adds to list to prevent garbage collection
-                self.images.append(ImageTk.PhotoImage(img))
+    def fill(self, index):
+        
+        # Free memory from previous load
+        self.canvas.delete('all')
+        self.images.clear()
+        
+        for i in range(self.image_load):
+            if index + i >= len(os.listdir(self.path)):
+                break
             
-            height = 0
-            # Creates each image and updates the height to place next image
-            for i in range(len(self.images)):
-                self.canvas.create_image(0, height, anchor=tk.NW, image=self.images[i])
-                height = height + self.images[i].height()
-    
+            img = Image.open(os.path.join(self.path, self.natural_sort(os.listdir(self.path))[index + i]))
+        
+            # Rescales all images to width
+            if img.width != self.width:
+                scale = img.height / img.width
+                img = img.resize((self.width, int(self.width * scale)), Image.Resampling.LANCZOS)
+
+            # Adds to list to prevent garbage collection
+            self.images.append(ImageTk.PhotoImage(img))
+        
+        height = 0
+        for i in range(len(self.images)):
+            self.canvas.create_image(0, height, anchor=tk.NW, image=self.images[i])
+            height = height + self.images[i].height()
+        
+        self.canvas.yview_moveto(-1)
+
+
+    # Natural sort files
+    def natural_sort(self, l): 
+        convert = lambda text: int(text) if text.isdigit() else text.lower()
+        alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+        return sorted(l, key=alphanum_key)

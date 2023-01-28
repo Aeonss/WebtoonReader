@@ -20,7 +20,7 @@
 ## 🚀 &nbsp; Features
 * Comfortably read locally stored manga/webtoon
 * Automatically bookmarks each manga/webtoon
-* Configure manga/webtoon width, height, and scroll speed
+* Configure manga/webtoon width, height, scroll speed, and invert mouse scroll
 * Clean and intuitive interface
 
 ## 📝 &nbsp; How To Use
@@ -77,6 +77,8 @@ WebtoonReader will bookmark where you left off on each Manga after each session.
 
 ## 🤖 &nbsp; To Do
 * Squash all the bugs!
+* Automatically load next chapter (if possible) after finishing a chapter
+* Add feature to dynamically load previous pages of a chapter
 
 ## 📘 &nbsp; License
 WebtoonReader is released under the [MIT license](https://github.com/Aeonss/WebtoonReader/blob/master/LICENSE.md).

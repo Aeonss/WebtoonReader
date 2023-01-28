@@ -16,15 +16,13 @@ from CustomScroller import ImageScroller
 
 SETTINGS_FILE = os.path.join(Path.home(), "webtoonreader_settings.json")
 
-# To do
-# Add bookmarks of where you left off on a manga
 
 class WebtoonReader:
     def __init__(self):
         # Create settings file in the home directory if it does not exist
         if not os.path.isfile(SETTINGS_FILE):
             with open(SETTINGS_FILE, "a") as f:
-                json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : ""}, f)
+                json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_scroll" : False}, f)
                 f.close()
         
 
@@ -35,6 +33,8 @@ class WebtoonReader:
         self.width = get_json('width')
         self.height = get_json('height')
         self.scroll_speed = get_json('scroll_speed')
+        self.load = get_json('load')
+        self.invert_scroll = get_json('invert_scroll')
         
         
         # Center Window
@@ -44,7 +44,14 @@ class WebtoonReader:
         
         # ImageScroller
         chapter_path = get_json('recent_chapter')
-        self.frame = ImageScroller(self.window, path=chapter_path, scrollbarwidth=15, width=self.width, height=self.height, speed=self.scroll_speed)
+        self.frame = ImageScroller(self.window, 
+                            path=chapter_path, 
+                            scrollbarwidth=15, 
+                            width=self.width, 
+                            height=self.height, 
+                            speed=self.scroll_speed, 
+                            load=self.load, 
+                            invert=self.invert_scroll)
         self.frame.pack()
         manga = os.path.basename(os.path.dirname(chapter_path))
         self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
@@ -115,7 +122,14 @@ class WebtoonReader:
         
         # Updates the image scroller
         self.frame.destroy()
-        self.frame = ImageScroller(self.window, path=chapter_path, scrollbarwidth=15, width=self.width, height=self.height, speed=self.scroll_speed)
+        self.frame = ImageScroller(self.window, 
+                            path=chapter_path, 
+                            scrollbarwidth=15, 
+                            width=self.width, 
+                            height=self.height, 
+                            speed=self.scroll_speed, 
+                            load=self.load, 
+                            invert=self.invert_scroll)
         self.frame.pack()
         
         # Updates settings json
@@ -145,7 +159,14 @@ class WebtoonReader:
         
         # Updates the image scroller
         self.frame.destroy()
-        self.frame = ImageScroller(self.window, path=chapter_path, scrollbarwidth=15, width=self.width, height=self.height, speed=self.scroll_speed)
+        self.frame = ImageScroller(self.window, 
+                            path=chapter_path, 
+                            scrollbarwidth=15, 
+                            width=self.width, 
+                            height=self.height, 
+                            speed=self.scroll_speed, 
+                            load=self.load, 
+                            invert=self.invert_scroll)
         self.frame.pack()
         
         # Updates the settings json
@@ -175,7 +196,14 @@ class WebtoonReader:
         
         # Updates the image scroller
         self.frame.destroy()
-        self.frame = ImageScroller(self.window, path=chapter_path, scrollbarwidth=15, width=self.width, height=self.height, speed=self.scroll_speed)
+        self.frame = ImageScroller(self.window, 
+                                   path=chapter_path, 
+                                   scrollbarwidth=15, 
+                                   width=self.width, 
+                                   height=self.height, 
+                                   speed=self.scroll_speed, 
+                                   load=self.load, 
+                                   invert=self.invert_scroll)
         self.frame.pack()
         
         # Updates the settings json
@@ -220,6 +248,16 @@ class WebtoonReader:
         self.scroll_speed_slider.set(self.scroll_speed)
         self.scroll_speed_slider.pack(pady=10)
         self.scroll_speed_slider.bind("<ButtonRelease-1>", self.update_speed)
+        
+        invert_label = tk.Label(settings, text="Invert Scroll").pack(pady=10)
+        self.invert_checkbox = tk.IntVar()
+        self.checkbutton = tk.Checkbutton(settings, variable=self.invert_checkbox)
+        if self.invert_scroll:
+            self.checkbutton.select()
+        else:
+            self.checkbutton.deselect()
+        self.checkbutton.pack(pady=10)
+        self.checkbutton.bind("<ButtonRelease-1>", self.update_invert)
 
         settings.mainloop()
         
@@ -227,17 +265,42 @@ class WebtoonReader:
     def update_width(self, e):
         self.width = self.width_slider.get()
         update_json('width', self.width_slider.get())
+        self.restart_canvas()
     
     # Updates height in settings json
     def update_height(self, e):
         self.height = self.height_slider.get()
-        update_json('height', self.height_slider.get())
+        update_json('height', self.height_slider.get())  
+        self.restart_canvas()
         
     # Updates scroll speed in settings json
     def update_speed(self, e):
         self.scroll_speed = self.scroll_speed_slider.get()
         update_json('scroll_speed', self.scroll_speed_slider.get())
+        self.restart_canvas()
 
+    def update_invert(self, e):
+        if self.invert_checkbox.get() == 0:
+            update_json('invert_scroll', True)
+            self.invert_scroll = True
+        else:
+            update_json('invert_scroll', False)
+            self.invert_scroll = False
+        self.restart_canvas()
+    
+    
+    def restart_canvas(self):
+        chapter_path = get_json('recent_chapter')
+        self.frame.destroy()
+        self.frame = ImageScroller(self.window, 
+                                   path=chapter_path, 
+                                   scrollbarwidth=15, 
+                                   width=self.width, 
+                                   height=self.height, 
+                                   speed=self.scroll_speed, 
+                                   load=self.load, 
+                                   invert=self.invert_scroll)
+        self.frame.pack()
 
 # Update the json value if key exists, otherwise adds to json
 def update_json(key, value):
@@ -260,7 +323,14 @@ def get_json(key):
             json_file.close()
             return value
     json_file.close()
-    return None
+    
+    # Recreate the settings file if its broken
+    if os.path.isfile(SETTINGS_FILE):
+        os.remove(SETTINGS_FILE)
+        with open(SETTINGS_FILE, "a") as f:
+            json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_scroll" : False}, f)
+            f.close()
+    return get_json(key)
 
 
 # Returns a natural sorted list of absolute paths directories
@@ -269,12 +339,12 @@ def abslistdir(path):
     for root, dirs, files in os.walk(path):
         for dir in dirs:
             list.append(os.path.join(root, dir).replace("\\", "/"))
-    list.sort(key=natural_sort_key)
+    list.sort(key=natural_sort)
     return list
 
 
 # Natural sort a list
-def natural_sort_key(list):
+def natural_sort(list):
     return [int(text) if text.isdigit() else text.lower()
         for text in re.split(re.compile('([0-9]+)'), list)]  
 
