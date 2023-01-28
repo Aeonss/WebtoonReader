@@ -1,35 +1,29 @@
-# Makes sure modules are installed
-try:
-    import tkinter as tk 
-    from tkinter import filedialog
-    from PIL import ImageTk, Image
-except ModuleNotFoundError:
-    print("Downloading packages...")
-    os.system('pip install tkinter')
-    os.system('pip install pillow')
-    print("Please run the program again.")
-    
-
+# Dependencies
 import os, json, re
 from pathlib import Path
+import tkinter as tk 
+from tkinter import filedialog
+from PIL import ImageTk, Image
 from CustomScroller import ImageScroller
 
+# SETTINGS
 SETTINGS_FILE = os.path.join(Path.home(), "webtoonreader_settings.json")
 
 
 class WebtoonReader:
     def __init__(self):
+        
         # Create settings file in the home directory if it does not exist
         if not os.path.isfile(SETTINGS_FILE):
             with open(SETTINGS_FILE, "a") as f:
-                json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_scroll" : False}, f)
+                json.dump({"width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_drag" : False}, f)
                 f.close()
+        
+        # Checks if paths in settings exists
         else:
             if not os.path.exists(get_json("recent_chapter")):
                 update_json("recent_chapter", "")
                 update_json("recent_chapter_index", "")
-            elif not os.path.exists(get_json("library")):
-                update_json("library", "")
         
 
         # Window
@@ -40,7 +34,7 @@ class WebtoonReader:
         self.height = get_json('height')
         self.scroll_speed = get_json('scroll_speed')
         self.load = get_json('load')
-        self.invert_scroll = get_json('invert_scroll')
+        self.invert_drag = get_json('invert_drag')
         
         
         # Center Window
@@ -57,54 +51,36 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_scroll)
+                            invert=self.invert_drag)
         self.frame.pack()
+        
+        # Title
         manga = os.path.basename(os.path.dirname(chapter_path))
         self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
         
         # Menubar
         menubar = tk.Menu(self.window)
         settingsmenu = tk.Menu(menubar, tearoff=0) 
-        settingsmenu.add_command(label="Load Library", command=self.get_library)
-        settingsmenu.add_command(label="Load Manga", command=self.load_manga)
-        settingsmenu.add_command(label="Load Chapter", command=lambda: self.create_chapter(None))
         settingsmenu.add_command(label="Settings", command=self.set_settings)
         settingsmenu.add_command(label="Help")
 
+        # Adding cascade to menubar
         menubar.add_cascade(label="Settings", menu=settingsmenu)
+        menubar.add_cascade(label="Load Chapter", command=lambda: self.create_chapter(None))
         menubar.add_cascade(label="Previous Chapter", command=self.prev_chapter)
         menubar.add_cascade(label="Next Chapter", command=self.next_chapter)
         
-        # Keybind shortcuts
+        # Keybind shortcuts for changing chapters
         self.window.bind("<Left>", self.key_prev_chapter)
         self.window.bind("<a>", self.key_prev_chapter)
         self.window.bind("<Right>", self.key_next_chapter)
         self.window.bind("<d>", self.key_next_chapter)
 
-
         # Start the window
         self.window.config(menu=menubar)
         self.window.mainloop()
-
-
-    # Loads the directory containing all mangas
-    def get_library(self):
-        library_path = tk.filedialog.askdirectory()
-        
-        if library_path != "":
-            update_json('library', library_path)
             
     
-    # Loads a manga from where the user last left off
-    def load_manga(self):
-        manga_path = tk.filedialog.askdirectory()
-        
-        if manga_path == "":
-            return
-        
-        chapter_path = get_json(os.path.basename(manga_path))
-        self.create_chapter(chapter_path)
-
 
     # Loads a chapter to read
     def create_chapter(self, path):
@@ -135,7 +111,7 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_scroll)
+                            invert=self.invert_drag)
         self.frame.pack()
         
         # Updates settings json
@@ -172,7 +148,7 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_scroll)
+                            invert=self.invert_drag)
         self.frame.pack()
         
         # Updates the settings json
@@ -209,7 +185,7 @@ class WebtoonReader:
                                    height=self.height, 
                                    speed=self.scroll_speed, 
                                    load=self.load, 
-                                   invert=self.invert_scroll)
+                                   invert=self.invert_drag)
         self.frame.pack()
         
         # Updates the settings json
@@ -235,7 +211,7 @@ class WebtoonReader:
         settings = tk.Toplevel()
         x = int(self.window.winfo_screenwidth()/2 - 200)
         y = int(self.window.winfo_screenheight()/2 - 200)
-        settings.geometry("%dx%d+%d+%d" % (400, 400, x, y))
+        settings.geometry("%dx%d+%d+%d" % (400, 500, x, y))
         
         width_label = tk.Label(settings, text="Width").pack(pady=10)
         self.width_slider = tk.Scale(settings, from_=200, to=self.window.winfo_screenwidth(), orient=tk.HORIZONTAL, length=300, resolution=20)
@@ -255,43 +231,59 @@ class WebtoonReader:
         self.scroll_speed_slider.pack(pady=10)
         self.scroll_speed_slider.bind("<ButtonRelease-1>", self.update_speed)
         
-        invert_label = tk.Label(settings, text="Invert Scroll").pack(pady=10)
+        invert_label = tk.Label(settings, text="Invert Mouse Drag").pack(pady=10)
         self.invert_checkbox = tk.IntVar()
         self.checkbutton = tk.Checkbutton(settings, variable=self.invert_checkbox)
-        if self.invert_scroll:
+        if self.invert_drag:
             self.checkbutton.select()
         else:
             self.checkbutton.deselect()
         self.checkbutton.pack(pady=10)
         self.checkbutton.bind("<ButtonRelease-1>", self.update_invert)
+        
+        load_label = tk.Label(settings, text="Number of Images to Load").pack(pady=10)
+        self.load_slider = tk.Scale(settings, from_=1, to=10, orient=tk.HORIZONTAL)
+        self.load_slider.set(self.load)
+        self.load_slider.pack(pady=10)
+        self.load_slider.bind("<ButtonRelease-1>", self.update_load)
 
         settings.mainloop()
-        
+    
+    
     # Updates width in settings json
     def update_width(self, e):
         self.width = self.width_slider.get()
-        update_json('width', self.width_slider.get())
+        update_json('width', self.width)
         self.restart_canvas()
+    
     
     # Updates height in settings json
     def update_height(self, e):
         self.height = self.height_slider.get()
-        update_json('height', self.height_slider.get())  
+        update_json('height', self.height)  
         self.restart_canvas()
+        
         
     # Updates scroll speed in settings json
     def update_speed(self, e):
         self.scroll_speed = self.scroll_speed_slider.get()
-        update_json('scroll_speed', self.scroll_speed_slider.get())
+        update_json('scroll_speed', self.scroll_speed)
         self.restart_canvas()
 
+    # Update invert mouse drag in settings json
     def update_invert(self, e):
         if self.invert_checkbox.get() == 0:
-            update_json('invert_scroll', True)
-            self.invert_scroll = True
+            update_json('invert_drag', True)
+            self.invert_drag = True
         else:
-            update_json('invert_scroll', False)
-            self.invert_scroll = False
+            update_json('invert_drag', False)
+            self.invert_drag = False
+        self.restart_canvas()
+    
+    
+    def update_load(self, e):
+        self.load = self.load_slider.get()
+        update_json('load', self.load)
         self.restart_canvas()
     
     
@@ -305,8 +297,11 @@ class WebtoonReader:
                                    height=self.height, 
                                    speed=self.scroll_speed, 
                                    load=self.load, 
-                                   invert=self.invert_scroll)
+                                   invert=self.invert_drag)
         self.frame.pack()
+
+
+
 
 # Update the json value if key exists, otherwise adds to json
 def update_json(key, value):
@@ -334,7 +329,7 @@ def get_json(key):
     if os.path.isfile(SETTINGS_FILE):
         os.remove(SETTINGS_FILE)
         with open(SETTINGS_FILE, "a") as f:
-            json.dump({"library" : os.getcwd(), "width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_scroll" : False}, f)
+            json.dump({"width" : 720, "height" : 800, "scroll_speed" : 3, "recent_chapter" : "", "recent_chapter_index" : "", "load" : 5, "invert_drag" : False}, f)
             f.close()
     return get_json(key)
 
@@ -353,6 +348,7 @@ def abslistdir(path):
 def natural_sort(list):
     return [int(text) if text.isdigit() else text.lower()
         for text in re.split(re.compile('([0-9]+)'), list)]  
+
 
 
 # Main

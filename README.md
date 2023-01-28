@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.imgur.com/LTBllUG.png" width="230" height="160"/></p>
+<p align="center"><img src="https://i.imgur.com/H3g88fd.png" width="230" height="160"/></p>
 
 <h1 align="center">WebtoonReader</h1>
 
@@ -18,14 +18,27 @@
 <font size="3">
 
 ## 🚀 &nbsp; Features
-* Comfortably read locally stored manga/webtoon
-* Automatically bookmarks each manga/webtoon
-* Configure manga/webtoon width, height, scroll speed, and invert mouse scroll
+* Comfortably read locally downloaded manga/webtoon
+* Read from where the chapter you left off on
+* Configure manga/webtoon width, height, scroll speed, mouse drag, and number of images to load
 * Clean and intuitive interface
 
-## 📝 &nbsp; How To Use
+## 🔨 &nbsp; Installation
     
-Make sure [Python](https://www.python.org/downloads/) is installed!
+Install python:
+``` bash
+https://www.python.org/downloads/
+```
+
+Download the [latest](https://github.com/Aeonss/WebtoonReader/releases/latest/) release.
+``` bash
+https://github.com/Aeonss/WebtoonReader/releases/latest/
+```
+
+Download the requirements:
+``` bash
+pip install -r requirements.txt
+```
 
 <h2>Library Setup</h2>
 
@@ -50,35 +63,24 @@ Library/
         └── 0002.jpg
 ```
 
-**IMPORTANT**: Folders names do not matter, but ***chapters names and images must be named alphanumerically***.
+**IMPORTANT**: ***chapters names and images must be named alphanumerically***.
 
 To download manga/webtoon chapters, use [HakuNeko](https://hakuneko.download/).
-
-
-<h2>Intial Download</h2>
-<ol>
-<li>Load the library by clicking on the "Settings" button at the top and then "Load Library"</li>
-<li>Load a chapter by clicking on the "Load Chapter" button at the top</li>
-<li>To load the next chapter, press "d" or the right arrow key</li>
-</ol>
-
-WebtoonReader will load the chapter you were previous on after relaunch.
 
 
 
 ## ✅ &nbsp; Additional Information
 * WebtoonReader was created with **Python3** and **Tkinter**
-* "Load Manga" will load the chapter where you last left off on the manga
-* "Load Chapter" will load a specific chapter
 * Use "a" or the left arrow key to go to the previous chapter
 * Use "d" or the right arrow key to go to the next chapter
-* Use the mouse scroll wheel, [mouse button 4/5](https://qph.cf2.quoracdn.net/main-qimg-830f83b6de3be2c19c961a05b6e50d57), or mouse drag on the manga to read
+* Use the mouse scroll wheel, [mouse button 4/5](https://qph.cf2.quoracdn.net/main-qimg-830f83b6de3be2c19c961a05b6e50d57), or mouse drag on the page to read
 * Please request any features or report any bugs in [issues](https://github.com/Aeonss/WebtoonReader/issues).
 
 ## 🤖 &nbsp; To Do
 * Squash all the bugs!
 * Automatically load next chapter (if possible) after finishing a chapter
-* Add feature to dynamically load previous pages of a chapter
+* Detect new releases on Github
+* Make "help" button do something...
 
 ## 📘 &nbsp; License
 WebtoonReader is released under the [MIT license](https://github.com/Aeonss/WebtoonReader/blob/master/LICENSE.md).

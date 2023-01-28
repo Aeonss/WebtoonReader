@@ -66,14 +66,26 @@ class ImageScroller(tk.Frame):
         # Windows / Mac
         elif event.num == 5 or event.delta < 0:
             self.canvas.yview_scroll(self.scroll_speed, "units" )
-            
+        
+        
+        # If at the top of the scrollbar, load previous images
+        if self.v_scroll.get()[1] < 0.1:
+            if self.scroll_flag and self.image_index - self.image_load >= 0:
+                self.image_index -= self.image_load
+                self.fill(self.image_index)
+                self.scroll_flag = False
+                self.canvas.yview_moveto(1)
+        
+        # If at the bottom of the scrollbar, load next images
         if self.v_scroll.get()[1] == 1:
             if self.scroll_flag and self.image_index + self.image_load < len(os.listdir(self.path)):
                 self.image_index += self.image_load
                 self.fill(self.image_index)
                 self.scroll_flag = False
+                self.canvas.yview_moveto(0)
         
-        if self.v_scroll.get()[1] != 0 and self.v_scroll.get()[1] != 1:
+        # Enable flag to load next images
+        if self.v_scroll.get()[1] > 0.1 and self.v_scroll.get()[1] != 1:
             self.scroll_flag = True
                 
             
@@ -101,12 +113,26 @@ class ImageScroller(tk.Frame):
             self.canvas.yview('scroll', deltaY, 'units')
         self._starting_drag_position =  (event.x, event.y)
         
+        
+        # If at the top of the scrollbar, load previous images
+        if self.v_scroll.get()[1] < 0.1:
+            if self.scroll_flag and self.image_index - self.image_load >= 0:
+                self.image_index -= self.image_load
+                self.fill(self.image_index)
+                self.scroll_flag = False
+                self.canvas.yview_moveto(1)
+        
+        # If at the bottom of the scrollbar, load next images
         if self.v_scroll.get()[1] == 1:
             if self.scroll_flag and self.image_index + self.image_load < len(os.listdir(self.path)):
                 self.image_index += self.image_load
                 self.fill(self.image_index)
                 self.scroll_flag = False
-    
+                self.canvas.yview_moveto(0)
+        
+        # Enable flag to load next images
+        if self.v_scroll.get()[1] > 0.1 and self.v_scroll.get()[1] != 1:
+            self.scroll_flag = True
     
     def stop_scroll(self, event):
         self.canvas.config(xscrollincrement=0) 
@@ -115,7 +141,7 @@ class ImageScroller(tk.Frame):
         
     # Fills the frame with images from the folder path
     def fill(self, index):
-        
+
         # Free memory from previous load
         self.canvas.delete('all')
         self.images.clear()
@@ -125,7 +151,7 @@ class ImageScroller(tk.Frame):
                 break
             
             img = Image.open(os.path.join(self.path, self.natural_sort(os.listdir(self.path))[index + i]))
-        
+
             # Rescales all images to width
             if img.width != self.width:
                 scale = img.height / img.width
@@ -135,11 +161,10 @@ class ImageScroller(tk.Frame):
             self.images.append(ImageTk.PhotoImage(img))
         
         height = 0
+        
         for i in range(len(self.images)):
             self.canvas.create_image(0, height, anchor=tk.NW, image=self.images[i])
             height = height + self.images[i].height()
-        
-        self.canvas.yview_moveto(-1)
 
 
     # Natural sort files
