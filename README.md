@@ -62,7 +62,7 @@ To download manga/webtoon chapters, use [HakuNeko](https://hakuneko.download/).
 <li>To load the next chapter, press "d" or the right arrow key</li>
 </ol>
 
-WebtoonReader will bookmark where you left off on each Manga after each session.
+WebtoonReader will load the chapter you were previous on after relaunch.
 
 
 
