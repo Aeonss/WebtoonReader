@@ -79,13 +79,19 @@ To download manga/webtoon chapters, use [HakuNeko](https://hakuneko.download/).
 * Use "a" or the left arrow key to go to the previous chapter
 * Use "d" or the right arrow key to go to the next chapter
 * Use the mouse scroll wheel, [mouse button 4/5](https://qph.cf2.quoracdn.net/main-qimg-830f83b6de3be2c19c961a05b6e50d57), or mouse drag on the page to read
-* Please request any features or report any bugs in [issues](https://github.com/Aeonss/WebtoonReader/issues).
+* Please request any features or report any 
+
+
+## ❤️&nbsp; Contributions
+* Thank you to [GustJc](https://github.com/GustJc) for help on issues.
+
 
 ## 🤖 &nbsp; To Do
 * Squash all the bugs!
 * Automatically load next chapter (if possible) after finishing a chapter
 * Detect new releases on Github
 * Make "help" button do something...
+
 
 ## 📘 &nbsp; License
 WebtoonReader is released under the [MIT license](https://github.com/Aeonss/WebtoonReader/blob/master/LICENSE.md).

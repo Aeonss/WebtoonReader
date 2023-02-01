@@ -27,7 +27,7 @@ class ImageScroller(tk.Frame):
         self.image_index = 0
         self.top = self.canvas.yview()[1]
         
-        # Fill the frame with images
+        # Fill the frame with images if there is a chapter to load
         if self.path != "":
             self.fill(self.image_index)
         
@@ -67,7 +67,6 @@ class ImageScroller(tk.Frame):
         elif event.num == 5 or event.delta < 0:
             self.canvas.yview_scroll(self.scroll_speed, "units" )
         
-        
         self.checkLoadChapter()
                 
             
@@ -94,7 +93,6 @@ class ImageScroller(tk.Frame):
         else:
             self.canvas.yview('scroll', deltaY, 'units')
         self._starting_drag_position =  (event.x, event.y)
-        
         
         self.checkLoadChapter()
     
@@ -129,16 +127,18 @@ class ImageScroller(tk.Frame):
         for i in range(len(self.images)):
             self.canvas.create_image(0, height, anchor=tk.NW, image=self.images[i])
             height = height + self.images[i].height()
+        
 
 
     def checkLoadChapter(self):
-        
         # If at the top of the scrollbar, load previous images
         if self.v_scroll.get()[1] == self.top:
             if self.scroll_flag and self.image_index - self.image_load >= 0:
                 self.image_index -= self.image_load
                 self.fill(self.image_index)
                 self.scroll_flag = False
+                self.v_scroll.config(command=self.canvas.yview)
+                self.canvas.config(scrollregion=self.canvas.bbox('all'))
                 self.canvas.yview_moveto(1)
         
         # If at the bottom of the scrollbar, load next images
@@ -147,8 +147,12 @@ class ImageScroller(tk.Frame):
                 self.image_index += self.image_load
                 self.fill(self.image_index)
                 self.scroll_flag = False
+                self.v_scroll.config(command=self.canvas.yview)
+                self.canvas.config(scrollregion=self.canvas.bbox('all'))
                 self.canvas.yview_moveto(0)
                 self.top = self.canvas.yview()[1]
+                
+                
                         
         # Enable flag to load next images
         if self.v_scroll.get()[1] > self.top and self.v_scroll.get()[1] != 1:
