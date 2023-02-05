@@ -148,6 +148,7 @@ class WebtoonReader:
         chapter_path = chapter_list[chapter_index]
         
         # Updates the image scroller
+        manga = os.path.basename(manga_path)
         self.frame.destroy()
         self.frame = ImageScroller(self.window, 
                             path=chapter_path, 
@@ -156,15 +157,14 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_drag)
+                            invert=self.invert_drag,
+                            manga_name=manga)
         self.frame.pack()
         
         # Updates the settings json
         update_json('recent_chapter', chapter_path)
         update_json('recent_chapter_index', chapter_index)
-        manga = os.path.basename(manga_path)
         update_json(manga, chapter_path)
-        self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
     
     
     # Finds the previous chapter of the manga
@@ -185,6 +185,7 @@ class WebtoonReader:
         chapter_path = chapter_list[chapter_index]
         
         # Updates the image scroller
+        manga = os.path.basename(manga_path)
         self.frame.destroy()
         self.frame = ImageScroller(self.window, 
                                    path=chapter_path, 
@@ -193,15 +194,14 @@ class WebtoonReader:
                                    height=self.height, 
                                    speed=self.scroll_speed, 
                                    load=self.load, 
-                                   invert=self.invert_drag)
+                                   invert=self.invert_drag,
+                                   manga_name=manga)
         self.frame.pack()
         
         # Updates the settings json
         update_json('recent_chapter', chapter_path)
         update_json('recent_chapter_index', chapter_index)
-        manga = os.path.basename(manga_path)
         update_json(manga, chapter_path)
-        self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
         
         
     # Keybind shortcut for next chapter
@@ -297,6 +297,7 @@ class WebtoonReader:
     
     
     def restart_canvas(self):
+        manga = os.path.basename(os.path.dirname(chapter_path))
         chapter_path = get_json('recent_chapter')
         self.frame.destroy()
         self.frame = ImageScroller(self.window, 
@@ -306,7 +307,8 @@ class WebtoonReader:
                                    height=self.height, 
                                    speed=self.scroll_speed, 
                                    load=self.load, 
-                                   invert=self.invert_drag)
+                                   invert=self.invert_drag,
+                                   manga_name=manga)
         self.frame.pack()
 
 
