@@ -76,9 +76,27 @@ class WebtoonReader:
         self.window.bind("<Right>", self.key_next_chapter)
         self.window.bind("<d>", self.key_next_chapter)
 
+        # Scroll shortcuts
+        self.window.bind("<Down>", self.key_down_scroll)
+        self.window.bind("<Up>", self.key_up_scroll)
+        self.window.bind("<Prior>", self.key_pageup_scroll)
+        self.window.bind("<Next>", self.key_pagedown_scroll)
+
         # Start the window
         self.window.config(menu=menubar)
         self.window.mainloop()
+
+    def key_down_scroll(self, e):
+        self.frame.key_scroll(1)
+
+    def key_up_scroll(self, e):
+        self.frame.key_scroll(-1)
+
+    def key_pageup_scroll(self, e):
+        self.frame.key_scroll(-1, "page")
+
+    def key_pagedown_scroll(self, e):
+        self.frame.key_scroll(1, "page")
             
 
     # Loads a chapter to read
