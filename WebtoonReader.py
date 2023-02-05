@@ -3,7 +3,6 @@ import os, json, re
 from pathlib import Path
 import tkinter as tk 
 from tkinter import filedialog
-from PIL import ImageTk, Image
 from CustomScroller import ImageScroller
 
 # SETTINGS
@@ -44,6 +43,7 @@ class WebtoonReader:
         
         # ImageScroller
         chapter_path = get_json('recent_chapter')
+        manga = os.path.basename(os.path.dirname(chapter_path))
         self.frame = ImageScroller(self.window, 
                             path=chapter_path, 
                             scrollbarwidth=15, 
@@ -51,12 +51,9 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_drag)
+                            invert=self.invert_drag,
+                            manga_name=manga)
         self.frame.pack()
-        
-        # Title
-        manga = os.path.basename(os.path.dirname(chapter_path))
-        self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
         
         # Menubar
         menubar = tk.Menu(self.window)
@@ -69,6 +66,10 @@ class WebtoonReader:
         menubar.add_cascade(label="Load Chapter", command=lambda: self.create_chapter(None))
         menubar.add_cascade(label="Previous Chapter", command=self.prev_chapter)
         menubar.add_cascade(label="Next Chapter", command=self.next_chapter)
+
+        menubar.add_cascade(label="< Top", command=self.scroll_to_start)
+        menubar.add_cascade(label="End >", command=self.scroll_to_end)
+        menubar.add_cascade(label="Goto", command=self.scroll_to_page)
                 
         # Keybind shortcuts for changing chapters
         self.window.bind("<Left>", self.key_prev_chapter)
@@ -80,18 +81,27 @@ class WebtoonReader:
         self.window.config(menu=menubar)
         self.window.mainloop()
             
+    def scroll_to_start(self):
+        self.frame.scroll_to_start()
+
+    def scroll_to_end(self):
+        self.frame.scroll_to_end()
+
+    def scroll_to_page(self):
+        self.frame.scroll_to_page()
 
     # Loads a chapter to read
     def create_chapter(self, path):
         if path != None:
             chapter_path = path
         else:
-            chapter_path = tk.filedialog.askdirectory()
+            chapter_path = filedialog.askdirectory()
             if chapter_path == "":
                 return
         
         
         manga_path = os.path.dirname(chapter_path)
+        manga = os.path.basename(manga_path)
         chapter_list = abslistdir(manga_path)
         chapter_index = -1
         
@@ -110,15 +120,14 @@ class WebtoonReader:
                             height=self.height, 
                             speed=self.scroll_speed, 
                             load=self.load, 
-                            invert=self.invert_drag)
+                            invert=self.invert_drag,
+                            manga_name=manga)
         self.frame.pack()
         
         # Updates settings json
         update_json('recent_chapter', chapter_path)
         update_json('recent_chapter_index', chapter_index)
-        manga = os.path.basename(manga_path)
         update_json(manga, chapter_path)
-        self.window.title("[WebtoonReader] - " + manga + ": " + os.path.basename(chapter_path))
 
 
     # Finds the next chapter of the manga
