@@ -297,8 +297,8 @@ class WebtoonReader:
     
     
     def restart_canvas(self):
-        manga = os.path.basename(os.path.dirname(chapter_path))
         chapter_path = get_json('recent_chapter')
+        manga = os.path.basename(os.path.dirname(chapter_path))
         self.frame.destroy()
         self.frame = ImageScroller(self.window, 
                                    path=chapter_path, 
