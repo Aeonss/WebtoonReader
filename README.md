@@ -79,7 +79,8 @@ To download manga/webtoon chapters, use [HakuNeko](https://hakuneko.download/).
 * Use "a" or the left arrow key to go to the previous chapter
 * Use "d" or the right arrow key to go to the next chapter
 * Use the mouse scroll wheel, [mouse button 4/5](https://qph.cf2.quoracdn.net/main-qimg-830f83b6de3be2c19c961a05b6e50d57), or mouse drag on the page to read
-* Please request any features or report any 
+* Use the up arrow, down arrow, page up, or page down key to navigate through pages 
+* Please request any features or report any bugs
 
 
 ## ❤️&nbsp; Contributions
