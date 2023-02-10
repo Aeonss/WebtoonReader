@@ -116,10 +116,10 @@ class ImageScroller(tk.Frame):
         self.canvas.config(cursor="")
 
     def scroll_to_start(self):
-        self.canvas.yview_moveto(0.05)
+        self.canvas.yview_moveto(0.01)
 
     def scroll_to_end(self):
-        self.canvas.yview_moveto(0.95)
+        self.canvas.yview_moveto(0.99)
 
     # Load page from popup input
     def scroll_to_page(self):
@@ -206,7 +206,7 @@ class ImageScroller(tk.Frame):
         total_size = len(os.listdir(self.path))
         current_page = math.floor(self.image_index / self.image_load) + 1
         total_pages = math.ceil(max(1, total_size / self.image_load))
-        self.window.title(f"[WebtoonReader] - {self.manga_name} : {os.path.basename(self.path)} | {current_page} out of {total_pages}")
+        self.window.title(f"[WebtoonReader] - {self.manga_name} : {os.path.basename(self.path)} | Page ({current_page} / {total_pages})")
 
     # Natural sort files
     def natural_sort(self, l): 
