@@ -76,7 +76,15 @@ class ImageScroller(tk.Frame):
         self.checkLoadChapter()
                 
             
-            
+    def key_scroll(self, scroll=1, type="units"):
+        scroll_value = scroll
+
+        # Scale arrow scroll with scroll speed from settings
+        if type == "units":
+            scroll_value = scroll * self.scroll_speed
+
+        self.canvas.yview_scroll(scroll_value, type)
+
             
     # Mouse drag handling
     # https://shortrecipes.blogspot.com/2014/05/python-3-and-tkinter-scroll-canvas-with.html
