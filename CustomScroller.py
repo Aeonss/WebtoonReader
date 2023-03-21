@@ -203,6 +203,10 @@ class ImageScroller(tk.Frame):
             self.scroll_flag = True
 
     def update_title_name(self):
+        if self.path == '':
+            self.window.title("WebtoonReader")
+            return
+
         total_size = len(os.listdir(self.path))
         current_page = math.floor(self.image_index / self.image_load) + 1
         total_pages = math.ceil(max(1, total_size / self.image_load))
