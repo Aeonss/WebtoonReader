@@ -1,8 +1,8 @@
 # Dependencies
-import os, json, re, sys
+import os, json, re, sys, requests, webbrowser
 from pathlib import Path
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from CustomScroller import ImageScroller
 
 # SETTINGS
@@ -11,6 +11,9 @@ SETTINGS_FILE = os.path.join(Path.home(), "webtoonreader_settings.json")
 
 class WebtoonReader:
     def __init__(self):
+
+        # Checks github for the latest update
+        checkUpdate()
 
         # Create settings file in the home directory if it does not exist
         if not os.path.isfile(SETTINGS_FILE):
@@ -71,7 +74,7 @@ class WebtoonReader:
         menubar = tk.Menu(self.window)
         settingsmenu = tk.Menu(menubar, tearoff=0)
         settingsmenu.add_command(label="Settings", command=self.set_settings)
-        settingsmenu.add_command(label="Help")
+        settingsmenu.add_command(label="Help", command=self.get_help)
 
         # Adding cascade to menubar
         menubar.add_cascade(label="Settings", menu=settingsmenu)
@@ -288,6 +291,11 @@ class WebtoonReader:
         settings.mainloop()
 
 
+    # Open README
+    def get_help(self):
+        webbrowser.open_new_tab("https://github.com/Aeonss/WebtoonReader#readme")
+
+
     # Updates width in settings json
     def update_width(self, e):
         self.width = self.width_slider.get()
@@ -390,6 +398,17 @@ def natural_sort(list):
     return [int(text) if text.isdigit() else text.lower()
         for text in re.split(re.compile('([0-9]+)'), list)]
 
+
+# Check github for the latest update
+def checkUpdate():
+    TAG = "1.9"
+    
+    r = requests.get("https://api.github.com/repos/Aeonss/WebtoonReader/releases/latest")
+    latest_tag = json.loads(r.content).get("tag_name")
+    if latest_tag > TAG:
+        res = messagebox.askquestion(title="WebtoonReader", message=f"A new update has been released for WebtoonReader (v{latest_tag})! Do you want to download it?")
+        if res == 'yes':
+            webbrowser.open_new_tab(f"https://github.com/Aeonss/WebtoonReader/releases/tag/{latest_tag}/")
 
 
 # Main

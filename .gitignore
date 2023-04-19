@@ -1,0 +1,7 @@
+/Solo Leveling
+/dist
+/build
+/__pycache__
+*.spec
+*.ico
+*.exe

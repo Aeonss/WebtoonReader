@@ -84,14 +84,12 @@ To download manga/webtoon chapters, use [HakuNeko](https://hakuneko.download/).
 
 
 ## ❤️&nbsp; Contributions
-* Thank you to [GustJc](https://github.com/GustJc) for finding bugs and helping on feature releases.
+* Massive thanks to [GustJc](https://github.com/GustJc) for finding bugs and contributing to releases.
 
 
 ## 🤖 &nbsp; To Do
 * Squash all the bugs!
 * Automatically load next chapter (if possible) after finishing a chapter
-* Detect new releases on Github
-* Make "help" button do something...
 
 
 ## 📘 &nbsp; License
