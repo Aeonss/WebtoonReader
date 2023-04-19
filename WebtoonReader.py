@@ -1,5 +1,5 @@
 # Dependencies
-import os, json, re
+import os, json, re, sys
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog
@@ -43,6 +43,18 @@ class WebtoonReader:
 
         # ImageScroller
         chapter_path = get_json('recent_chapter')
+
+        # Check args to work with context menu
+        if len(sys.argv) > 1:
+            if os.path.isdir(sys.argv[1]) == False:
+                chapter_path = os.path.split(os.path.abspath(sys.argv[1]))[0]
+            else:
+                chapter_path = sys.argv[1]
+
+        print('='*50)
+        print(chapter_path)
+        print('\n')
+
         manga = os.path.basename(os.path.dirname(chapter_path))
         self.frame = ImageScroller(self.window,
                             path=chapter_path,
