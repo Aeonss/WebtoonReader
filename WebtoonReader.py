@@ -46,19 +46,35 @@ class WebtoonReader:
 
         # ImageScroller
         chapter_path = get_json('recent_chapter')
+        manga = os.path.basename(os.path.dirname(chapter_path))
 
-        # Check args to work with context menu
+        # Check if context menu
         if len(sys.argv) > 1:
             if os.path.isdir(sys.argv[1]) == False:
                 chapter_path = os.path.split(os.path.abspath(sys.argv[1]))[0]
             else:
                 chapter_path = sys.argv[1]
 
+
+            manga_path = os.path.dirname(chapter_path)
+            chapter_list = abslistdir(manga_path)
+
+            try:
+                chapter_index = chapter_list.index(chapter_path.replace("\\", "/"))
+                print("File folder Index of: " + str(chapter_index))
+            except ValueError:
+                chapter_index = 0
+
+            # Updates settings json
+            update_json('recent_chapter', chapter_path)
+            update_json('recent_chapter_index', chapter_index)
+            update_json(manga, chapter_path)
+
         print('='*50)
         print(chapter_path)
         print('\n')
 
-        manga = os.path.basename(os.path.dirname(chapter_path))
+
         self.frame = ImageScroller(self.window,
                             path=chapter_path,
                             scrollbarwidth=15,
@@ -128,14 +144,20 @@ class WebtoonReader:
         if path != None:
             chapter_path = path
         else:
-            chapter_path = filedialog.askdirectory()
+            recent_chapter = get_json('recent_chapter')
+            initialdir = os.path.dirname(recent_chapter)
+            initialfile = os.path.basename(recent_chapter)
+            chapter_path = filedialog.askopenfilename(
+                    initialdir=initialdir, initialfile=initialfile).rsplit('/', 1)[0]
+
+            print (chapter_path)
             if chapter_path == "":
                 return
 
 
         manga_path = os.path.dirname(chapter_path)
         manga = os.path.basename(manga_path)
-        chapter_list = abslistdir(manga_path)
+        chapter_list = self.frame.natural_sort(abslistdir(manga_path))
         chapter_index = -1
 
         # Finds the index of the current manga in the directory
